@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: worker}
+spec:
+  replicas: 3
+  selector: {matchLabels: {app: worker}}
+  template:
+    metadata: {labels: {app: worker}}
+    spec:
+      terminationGracePeriodSeconds: 180  # finish the PDF in hand after SIGTERM
+      containers:
+        - name: worker
+          image: exampilot:dev
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "exampilot.worker"]
+          envFrom: [{secretRef: {name: exampilot}}]
+          env:
+            - name: WORKER_ID
+              valueFrom: {fieldRef: {fieldPath: metadata.name}}
+            - {name: REDIS_URL, value: "redis://redis:6379/0"}
+            - {name: STORAGE_DIR, value: /data/uploads}
+          resources:
+            requests: {cpu: 500m, memory: 1Gi}
+            limits: {memory: 2Gi}
+          volumeMounts: [{name: uploads, mountPath: /data/uploads}]
+      volumes:
+        - name: uploads
+          persistentVolumeClaim: {claimName: uploads}

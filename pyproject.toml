@@ -1,0 +1,53 @@
+[project]
+name = "exampilot"
+version = "0.1.0"
+description = "Study agent over your own course material: cited answers, quizzes, and a scheduler that knows what you're bad at."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "anthropic>=1.0",
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "python-multipart>=0.0.9",
+  "psycopg[binary]>=3.2",
+  "psycopg-pool>=3.2",
+  "pgvector>=0.3",
+  "redis>=5.0",
+  "pymupdf>=1.24",
+  "sentence-transformers>=3.0",
+  "torch>=2.3",
+  "numpy>=1.26",
+  "pydantic>=2.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5", "scikit-learn>=1.5", "matplotlib>=3.9", "pandas>=2.2"]
+gcp = ["google-cloud-storage>=2.17"]
+
+[project.scripts]
+exampilot = "exampilot.cli:main"
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = [
+  "slow: kills real worker processes, takes a minute",
+  "db: needs Postgres",
+  "redis: needs Redis",
+  "live: calls the real Claude API (run with -m live)",
+]
+addopts = "-m 'not live and not slow'"

@@ -1,0 +1,16 @@
+# course material is copyrighted, never commit it
+data/
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+node_modules/
+web/dist/
+eval-report.json
+.DS_Store
+
+# my own build notes, kept local
+project.md

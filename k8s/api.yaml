@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: api}
+spec:
+  replicas: 1
+  selector: {matchLabels: {app: api}}
+  template:
+    metadata: {labels: {app: api}}
+    spec:
+      containers:
+        - name: api
+          image: exampilot:dev
+          imagePullPolicy: IfNotPresent
+          ports: [{containerPort: 8000}]
+          envFrom: [{secretRef: {name: exampilot}}]
+          env:
+            - {name: REDIS_URL, value: "redis://redis:6379/0"}
+            - {name: STORAGE_DIR, value: /data/uploads}
+          resources:
+            requests: {cpu: 250m, memory: 1Gi}
+            limits: {memory: 2Gi}
+          readinessProbe:
+            httpGet: {path: /readyz, port: 8000}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: 8000}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts: [{name: uploads, mountPath: /data/uploads}]
+      volumes:
+        - name: uploads
+          persistentVolumeClaim: {claimName: uploads}
+---
+apiVersion: v1
+kind: Service
+metadata: {name: api}
+spec:
+  selector: {app: api}
+  ports: [{port: 80, targetPort: 8000}]

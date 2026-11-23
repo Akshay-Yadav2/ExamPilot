@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: uploads}
+spec:
+  # kind's local-path provisioner is single-node, so RWO is fine there.
+  # On a real multi-node cluster this needs RWX or a GCS bucket instead.
+  accessModes: [ReadWriteOnce]
+  resources: {requests: {storage: 5Gi}}

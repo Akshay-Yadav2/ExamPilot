@@ -1,0 +1,9 @@
+# Written by hand so web/dist/ is NOT skipped (the default follows .gitignore).
+.git/
+.venv/
+data/
+.env
+node_modules/
+web/node_modules/
+__pycache__/
+.pytest_cache/

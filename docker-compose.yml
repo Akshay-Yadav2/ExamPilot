@@ -1,0 +1,54 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: exampilot
+      POSTGRES_PASSWORD: exampilot
+      POSTGRES_DB: exampilot
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # only runs on an empty volume; after schema changes: docker compose down -v
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+      - ./db/topics.sql:/docker-entrypoint-initdb.d/002_topics.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U exampilot"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://exampilot:exampilot@db:5432/exampilot
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_DIR: /data/uploads
+    volumes: [uploads:/data/uploads]
+    ports: ["8000:8000"]
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_started}
+
+  worker:
+    build: .
+    command: ["python", "-m", "exampilot.worker"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://exampilot:exampilot@db:5432/exampilot
+      REDIS_URL: redis://redis:6379/0
+      STORAGE_DIR: /data/uploads
+    volumes: [uploads:/data/uploads]
+    stop_grace_period: 3m
+    deploy:
+      replicas: 3
+    depends_on:
+      db: {condition: service_healthy}
+      redis: {condition: service_started}
+
+volumes:
+  pgdata: {}
+  uploads: {}

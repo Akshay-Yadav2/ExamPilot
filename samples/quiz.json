@@ -1,0 +1,465 @@
+[
+ {
+  "topic_id": "daa.shortest_paths",
+  "kind": "mcq",
+  "source": "Dijkstra negative edge",
+  "question": "What happens if you run Dijkstra's algorithm on a graph with a negative edge (but no negative cycle)?",
+  "choices": [
+   "It terminates but may return a wrong distance",
+   "It loops forever",
+   "It throws an error immediately",
+   "It always returns correct distances"
+  ],
+  "answer": "It terminates but may return a wrong distance",
+  "explanation": "Vertices are finalised when extracted and never revisited, so a cheaper path found later through the negative edge is ignored. It still terminates."
+ },
+ {
+  "topic_id": "daa.shortest_paths",
+  "kind": "short",
+  "source": "Bellman-Ford negative cycle",
+  "question": "How does Bellman-Ford detect a negative-weight cycle reachable from the source?",
+  "choices": [],
+  "answer": "After the V-1 rounds of relaxing every edge, it does one more pass over all edges. If any edge can still be relaxed, a negative-weight cycle is reachable from s.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "daa.shortest_paths",
+  "kind": "mcq",
+  "source": "Floyd-Warshall",
+  "question": "What is the running time of Floyd-Warshall?",
+  "choices": [
+   "O(V³)",
+   "O(VE)",
+   "O(E log V)",
+   "O(V² log V)"
+  ],
+  "answer": "O(V³)",
+  "explanation": "Three nested loops over the vertices: intermediate k, then i and j."
+ },
+ {
+  "topic_id": "daa.dp",
+  "kind": "mcq",
+  "source": "knapsack pseudo-polynomial",
+  "question": "Why is the O(nW) dynamic program for 0/1 knapsack not polynomial time?",
+  "choices": [
+   "W is encoded in log W bits, so nW is exponential in the input size",
+   "Each table cell takes O(n) time",
+   "Knapsack has no optimal substructure",
+   "The table has 2^n rows"
+  ],
+  "answer": "W is encoded in log W bits, so nW is exponential in the input size",
+  "explanation": "O(nW) is pseudo-polynomial: polynomial in the value of W but exponential in its bit length."
+ },
+ {
+  "topic_id": "daa.dp",
+  "kind": "short",
+  "source": "longest common subsequence",
+  "question": "Give the recurrence for the length of the longest common subsequence c[i][j].",
+  "choices": [],
+  "answer": "c[i][j] = c[i-1][j-1] + 1 if X[i] = Y[j], otherwise max(c[i-1][j], c[i][j-1]), with c[0][j] = c[i][0] = 0.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "daa.dp",
+  "kind": "mcq",
+  "source": "memoization tabulation",
+  "question": "Which statement about memoization and tabulation is true?",
+  "choices": [
+   "They have the same asymptotic running time",
+   "Tabulation is always asymptotically faster",
+   "Memoization cannot be used when subproblems overlap",
+   "Tabulation solves each subproblem many times"
+  ],
+  "answer": "They have the same asymptotic running time",
+  "explanation": "Both solve each subproblem once. Memoization may skip unneeded subproblems; tabulation avoids recursion overhead."
+ },
+ {
+  "topic_id": "daa.greedy",
+  "kind": "mcq",
+  "source": "activity selection finish time",
+  "question": "Which greedy rule is optimal for selecting the maximum number of non-overlapping intervals?",
+  "choices": [
+   "Earliest finish time",
+   "Earliest start time",
+   "Shortest interval",
+   "Fewest overlaps"
+  ],
+  "answer": "Earliest finish time",
+  "explanation": "Earliest finish time has an exchange-argument proof; the others have counterexamples."
+ },
+ {
+  "topic_id": "daa.mst",
+  "kind": "short",
+  "source": "cut property",
+  "question": "State the cut property and explain why it makes Kruskal's algorithm correct.",
+  "choices": [],
+  "answer": "The minimum-weight edge crossing any cut belongs to some MST. Every edge Kruskal adds is the lightest edge crossing the cut between its component and the rest of the graph, so it is safe to add.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "daa.mst",
+  "kind": "mcq",
+  "source": "Kruskal union-find",
+  "question": "What dominates the running time of Kruskal's algorithm?",
+  "choices": [
+   "Sorting the edges, O(E log E)",
+   "Union-find operations, O(V²)",
+   "Building the priority queue, O(V log V)",
+   "Cycle detection with DFS, O(VE)"
+  ],
+  "answer": "Sorting the edges, O(E log E)",
+  "explanation": "With union by rank and path compression the union-find work is nearly linear, so the sort dominates."
+ },
+ {
+  "topic_id": "daa.flow",
+  "kind": "short",
+  "source": "bipartite matching max flow",
+  "question": "How do you find a maximum bipartite matching using max flow?",
+  "choices": [],
+  "answer": "Add a source with capacity-1 edges to every left vertex and capacity-1 edges from every right vertex to a sink, give original edges capacity 1, run max flow. The integral max flow's saturated left-right edges are a maximum matching.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "daa.flow",
+  "kind": "mcq",
+  "source": "Edmonds-Karp",
+  "question": "What is the running time of Edmonds-Karp?",
+  "choices": [
+   "O(VE²)",
+   "O(E·|f*|)",
+   "O(V³)",
+   "O(E log V)"
+  ],
+  "answer": "O(VE²)",
+  "explanation": "Edmonds-Karp uses BFS shortest augmenting paths, which bounds the number of augmentations independently of capacities."
+ },
+ {
+  "topic_id": "daa.np",
+  "kind": "mcq",
+  "source": "reduction NP-complete",
+  "question": "To show a new problem X is NP-hard, you should:",
+  "choices": [
+   "Reduce a known NP-complete problem to X",
+   "Reduce X to a known NP-complete problem",
+   "Show X has a polynomial certificate",
+   "Show X is in P"
+  ],
+  "answer": "Reduce a known NP-complete problem to X",
+  "explanation": "The direction matters: if X could be solved fast, so could the known hard problem."
+ },
+ {
+  "topic_id": "swe.patterns",
+  "kind": "mcq",
+  "source": "Decorator responsibilities runtime",
+  "question": "Which pattern adds responsibilities to an object at runtime without subclassing?",
+  "choices": [
+   "Decorator",
+   "Adapter",
+   "Template Method",
+   "Singleton"
+  ],
+  "answer": "Decorator",
+  "explanation": "Decorator wraps an object behind the same interface and adds behaviour before or after delegating."
+ },
+ {
+  "topic_id": "swe.patterns",
+  "kind": "short",
+  "source": "Observer subject notify",
+  "question": "Describe the Observer pattern and why it reduces coupling.",
+  "choices": [],
+  "answer": "A subject keeps a list of observers and calls update() on each when its state changes. The subject depends only on the abstract Observer interface, so new observers can be added without changing it.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "swe.patterns",
+  "kind": "mcq",
+  "source": "Strategy algorithms interchangeable",
+  "question": "Which pattern replaces a long if/else chain that chooses between algorithms?",
+  "choices": [
+   "Strategy",
+   "Observer",
+   "Singleton",
+   "Adapter"
+  ],
+  "answer": "Strategy",
+  "explanation": "The context delegates to a strategy object chosen at runtime, so new algorithms don't require editing the context."
+ },
+ {
+  "topic_id": "swe.testing",
+  "kind": "mcq",
+  "source": "branch coverage statement",
+  "question": "Which coverage criterion is stronger?",
+  "choices": [
+   "Branch coverage",
+   "Statement coverage",
+   "They are equivalent",
+   "Neither implies anything"
+  ],
+  "answer": "Branch coverage",
+  "explanation": "Covering every branch both ways also executes every statement, but not the other way around."
+ },
+ {
+  "topic_id": "swe.testing",
+  "kind": "short",
+  "source": "mock stub test double",
+  "question": "What is the difference between a stub and a mock?",
+  "choices": [],
+  "answer": "A stub returns canned answers to calls. A mock also records how it was called so the test can verify the interaction.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "swe.design",
+  "kind": "mcq",
+  "source": "Liskov Square Rectangle",
+  "question": "Square extending Rectangle typically violates which principle?",
+  "choices": [
+   "Liskov substitution",
+   "Interface segregation",
+   "Single responsibility",
+   "Dependency inversion"
+  ],
+  "answer": "Liskov substitution",
+  "explanation": "Code that sets width and height independently gets the wrong area from a Square."
+ },
+ {
+  "topic_id": "swe.process",
+  "kind": "mcq",
+  "source": "Scrum product owner backlog",
+  "question": "In Scrum, who orders the product backlog?",
+  "choices": [
+   "The product owner",
+   "The scrum master",
+   "The development team",
+   "The customer's manager"
+  ],
+  "answer": "The product owner",
+  "explanation": "The scrum master removes impediments; the product owner owns and orders the backlog."
+ },
+ {
+  "topic_id": "ai.search",
+  "kind": "mcq",
+  "source": "consistent heuristic A* graph search",
+  "question": "A* graph search is guaranteed optimal when the heuristic is:",
+  "choices": [
+   "Consistent",
+   "Admissible only",
+   "Greater than the true cost",
+   "Zero everywhere except the goal"
+  ],
+  "answer": "Consistent",
+  "explanation": "Admissible is enough for tree search; graph search needs consistency (which implies admissibility)."
+ },
+ {
+  "topic_id": "ai.search",
+  "kind": "short",
+  "source": "iterative deepening",
+  "question": "Why is iterative deepening a good default uninformed search?",
+  "choices": [],
+  "answer": "It uses O(bd) memory like DFS but is complete and, for unit step costs, optimal like BFS. Re-expanding shallow levels is cheap because most nodes are at the deepest level.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "ai.adversarial",
+  "kind": "mcq",
+  "source": "alpha-beta perfect ordering",
+  "question": "With perfect move ordering, alpha-beta examines how many nodes?",
+  "choices": [
+   "O(b^(m/2))",
+   "O(b^m)",
+   "O(b^(3m/4))",
+   "O(bm)"
+  ],
+  "answer": "O(b^(m/2))",
+  "explanation": "The effective branching factor becomes √b, so you can search about twice as deep."
+ },
+ {
+  "topic_id": "ai.mdp_rl",
+  "kind": "short",
+  "source": "policy iteration value iteration",
+  "question": "What is the difference between value iteration and policy iteration?",
+  "choices": [],
+  "answer": "Value iteration repeatedly applies the Bellman optimality update to V until convergence and then extracts a greedy policy. Policy iteration alternates full evaluation of a fixed policy with greedy improvement and stops when the policy no longer changes.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "ai.mdp_rl",
+  "kind": "mcq",
+  "source": "Q-learning off-policy",
+  "question": "Why is Q-learning called off-policy?",
+  "choices": [
+   "It learns optimal Q-values while following an exploratory policy",
+   "It never uses a policy",
+   "It requires the transition model",
+   "It only updates at the end of an episode"
+  ],
+  "answer": "It learns optimal Q-values while following an exploratory policy",
+  "explanation": "The max over next actions targets the greedy policy, while behaviour can be ε-greedy."
+ },
+ {
+  "topic_id": "ai.probability",
+  "kind": "mcq",
+  "source": "explaining away v-structure",
+  "question": "In A → B ← C, what happens to A and C when B is observed?",
+  "choices": [
+   "They become dependent",
+   "They become independent",
+   "Nothing changes",
+   "B becomes independent of A"
+  ],
+  "answer": "They become dependent",
+  "explanation": "This is explaining away: observing a common effect couples its causes."
+ },
+ {
+  "topic_id": "daa.asymptotics",
+  "kind": "mcq",
+  "source": "asymptotic upper bound",
+  "question": "Which statement is true?",
+  "choices": [
+   "n = O(n²)",
+   "n² = O(n)",
+   "n log n = Θ(n)",
+   "2ⁿ = O(n¹⁰⁰)"
+  ],
+  "answer": "n = O(n²)",
+  "explanation": "O is only an upper bound, so n = O(n²) holds even though it isn't tight."
+ },
+ {
+  "topic_id": "daa.divide_conquer",
+  "kind": "mcq",
+  "source": "master theorem merge sort",
+  "question": "What does the master theorem give for T(n) = 2T(n/2) + Θ(n)?",
+  "choices": [
+   "Θ(n log n)",
+   "Θ(n)",
+   "Θ(n²)",
+   "Θ(log n)"
+  ],
+  "answer": "Θ(n log n)",
+  "explanation": "f(n) = Θ(n) matches n^(log₂2) = n, the middle case, so Θ(n log n)."
+ },
+ {
+  "topic_id": "daa.graphs_basic",
+  "kind": "short",
+  "source": "Kosaraju strongly connected components",
+  "question": "Outline Kosaraju's algorithm for strongly connected components.",
+  "choices": [],
+  "answer": "Run DFS to get finish times, transpose the graph, then run DFS on the transpose in decreasing finish-time order. Each tree of the second DFS is one SCC. O(V + E).",
+  "explanation": ""
+ },
+ {
+  "topic_id": "swe.requirements",
+  "kind": "mcq",
+  "source": "non-functional requirements measurable",
+  "question": "Which is a well-written non-functional requirement?",
+  "choices": [
+   "95% of searches return in under 300 ms",
+   "The system should be fast",
+   "A student can upload a PDF",
+   "The UI should be user-friendly"
+  ],
+  "answer": "95% of searches return in under 300 ms",
+  "explanation": "Non-functional requirements need to be measurable to be testable; uploading a PDF is functional."
+ },
+ {
+  "topic_id": "swe.uml",
+  "kind": "mcq",
+  "source": "composition filled diamond",
+  "question": "In a UML class diagram, a filled diamond means:",
+  "choices": [
+   "Composition",
+   "Aggregation",
+   "Generalisation",
+   "Dependency"
+  ],
+  "answer": "Composition",
+  "explanation": "Filled diamond is composition (the part's lifetime is tied to the whole); hollow is aggregation."
+ },
+ {
+  "topic_id": "swe.architecture",
+  "kind": "short",
+  "source": "microservices trade-offs",
+  "question": "Give one advantage and one cost of a microservices architecture.",
+  "choices": [],
+  "answer": "Advantage: services deploy and scale independently and own their data. Cost: network failures, distributed data consistency and more operational overhead.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "swe.vcs_ci",
+  "kind": "mcq",
+  "source": "continuous delivery deployment",
+  "question": "What separates continuous deployment from continuous delivery?",
+  "choices": [
+   "Every passing change is released automatically",
+   "Code is merged to main often",
+   "Builds run on every push",
+   "Releases need a manual approval"
+  ],
+  "answer": "Every passing change is released automatically",
+  "explanation": "Delivery keeps main deployable; deployment actually ships every passing change."
+ },
+ {
+  "topic_id": "swe.estimation",
+  "kind": "mcq",
+  "source": "risk exposure probability impact",
+  "question": "Risk exposure is computed as:",
+  "choices": [
+   "Probability times impact",
+   "Impact minus probability",
+   "Story points times velocity",
+   "Number of risks per sprint"
+  ],
+  "answer": "Probability times impact",
+  "explanation": "Prioritise mitigation for risks with the highest probability × impact."
+ },
+ {
+  "topic_id": "ai.csp",
+  "kind": "mcq",
+  "source": "minimum remaining values heuristic",
+  "question": "The minimum remaining values heuristic chooses:",
+  "choices": [
+   "The variable with the fewest legal values left",
+   "The value that rules out the fewest options",
+   "The variable with the most constraints",
+   "A random unassigned variable"
+  ],
+  "answer": "The variable with the fewest legal values left",
+  "explanation": "MRV fails fast on the most constrained variable; least constraining value is about values, not variables."
+ },
+ {
+  "topic_id": "ai.logic",
+  "kind": "short",
+  "source": "resolution refutation empty clause",
+  "question": "How does resolution prove that KB entails α?",
+  "choices": [],
+  "answer": "Convert KB ∧ ¬α to CNF and apply resolution repeatedly. If the empty clause is derived, KB ∧ ¬α is unsatisfiable, so KB ⊨ α.",
+  "explanation": ""
+ },
+ {
+  "topic_id": "ai.ml",
+  "kind": "mcq",
+  "source": "overfitting test error",
+  "question": "Overfitting shows up as:",
+  "choices": [
+   "Low training error and high test error",
+   "High training error and high test error",
+   "High training error and low test error",
+   "Equal training and test error"
+  ],
+  "answer": "Low training error and high test error",
+  "explanation": "The model memorises the training data and fails to generalise."
+ },
+ {
+  "topic_id": "ai.neural",
+  "kind": "mcq",
+  "source": "non-linear activation layers",
+  "question": "Why do neural networks need non-linear activation functions?",
+  "choices": [
+   "Without them, stacked layers collapse into one linear function",
+   "They make backpropagation unnecessary",
+   "They reduce the number of weights",
+   "They guarantee convergence"
+  ],
+  "answer": "Without them, stacked layers collapse into one linear function",
+  "explanation": "A composition of linear maps is linear, so depth adds nothing without non-linearities."
+ }
+]

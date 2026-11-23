@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Fraunces", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-paper: #f6f3ec;
+  --color-card: #fffdf8;
+  --color-ink: #1f2a44;
+  --color-muted: #6b6f7b;
+  --color-line: #e5dfd2;
+
+  --color-daa: #4a5bd4;
+  --color-swe: #1f8a7a;
+  --color-ai: #c9822b;
+}
+
+html, body, #root { height: 100%; }
+body {
+  @apply bg-paper text-ink font-sans antialiased;
+}
+
+/* subtle ruled-paper texture behind the main column */
+.ruled {
+  background-image: linear-gradient(to bottom, transparent 31px, rgb(31 42 68 / 0.035) 32px);
+  background-size: 100% 32px;
+}
+
+.fade-in { animation: fade-in .25s ease-out both; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.dots span { animation: blink 1.2s infinite both; }
+.dots span:nth-child(2) { animation-delay: .2s; }
+.dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .2 } 40% { opacity: 1 } }

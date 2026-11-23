@@ -1,0 +1,140 @@
+# ExamPilot
+
+I had three finals in one week (SWE on Dec 16, AI on Dec 17, DAA on Dec 21) and the
+material was spread over 44 PDFs plus my own notes. ExamPilot reads all of it, answers
+questions with a citation to the exact file and page, quizzes me from the same material,
+and keeps track of which topics I keep getting wrong so the next quiz leans on those.
+
+![Ask](docs/screenshots/1-ask.png)
+
+| Quiz | Library | Progress |
+|---|---|---|
+| ![](docs/screenshots/2-quiz.png) | ![](docs/screenshots/3-library.png) | ![](docs/screenshots/4-progress.png) |
+
+## Try the UI without setting anything up
+
+```sh
+cd web
+npm install
+npm run demo        # http://localhost:5173
+```
+
+Demo mode runs on sample data in the browser. No database, Redis or API key needed.
+
+## How it works
+
+```
+ Browser (React) ──► FastAPI ──► Postgres 16 + pgvector + full-text
+                        │   └──► Claude API (chat agent, quiz gen, grading)
+                        ▼
+                     Redis queue ──► 3 workers: PDF → pages → chunks → embeddings → topic tags
+```
+
+- **Ingest.** Uploads are hashed (SHA-256 = document id, so the same file twice is one
+  document) and pushed onto a Redis queue. Workers pull text page by page, strip repeated
+  headers/footers, cut each page into chunks of at most 300 tokens, embed them with
+  `bge-small-en-v1.5`, tag a topic with a small PyTorch model, and write to Postgres.
+  A chunk never spans two pages, so every citation points at exactly one page.
+- **Queue.** Hand-written on Redis lists with `BLMOVE`: at-least-once delivery,
+  heartbeats, a reaper that hands a dead worker's job to someone else, exponential
+  backoff, and a dead-letter list after three failures. Processing is idempotent
+  (content-hash ids + `ON CONFLICT DO NOTHING`), so a job running twice is harmless.
+- **Search.** Vector search and Postgres full-text search, merged with reciprocal rank
+  fusion. Vectors catch paraphrases; keywords catch "Bellman-Ford" and "CAP theorem".
+- **Chat.** A tool loop I wrote on the Messages API, with `search_notes`,
+  `weakest_topics` and `recent_mistakes`. Search hits go back as `search_result` blocks
+  with citations on, so the model can only cite pages it was actually shown.
+- **Quiz.** Generation and grading are single structured-output calls, not an agent.
+  Questions that cite chunk ids we didn't send get dropped. Multiple choice is graded
+  locally, short answers by Claude against the reference answer and the source page.
+- **Scheduler.** Discounted Thompson sampling over topics: it looks for questions you're
+  likely to get wrong, weighted by exam weight, with old evidence fading 15% a day.
+  Due spaced-repetition reviews come first, and nothing gets scheduled after the exam.
+
+## Running it for real
+
+Needs Python 3.12, Docker, and an Anthropic API key with credits.
+
+```sh
+uv venv --python 3.12 .venv && source .venv/bin/activate
+uv pip install -e ".[dev]"
+cp .env.example .env                 # add ANTHROPIC_API_KEY and EXAMPILOT_TOKEN
+
+docker compose up -d db redis
+python -m exampilot.cli ingest ~/Desktop/"Sem 1"/"Design & Analysis Algorithms" --course daa --inline
+python -m exampilot.cli ask "why does Dijkstra fail with negative edges?"
+```
+
+No course files handy? `make sample` loads the [sample notes](samples/README.md) for all
+three courses and two weeks of made-up quiz history, without any API calls.
+
+Full stack (API + 3 workers):
+
+```sh
+make web            # builds web/dist, the API serves it
+docker compose up -d --build
+open http://localhost:8000
+```
+
+Other CLI commands: `chat`, `quiz daa`, `search "..."`, `status`, `requeue-stuck`,
+`requeue-dead`, `retag`.
+
+Course PDFs are never committed (`data/` is gitignored). The slides are NYU material
+and the textbook is copyrighted. CI runs on the sample notes in [samples/](samples/README.md)
+instead, with the questions in [eval/fixtures](eval/fixtures/README.md).
+
+## Tests and evals
+
+```sh
+pytest -q                                          # unit tests + Redis queue tests
+python -m eval.retrieval eval/questions.jsonl --all-modes
+python -m eval.answers eval/questions.jsonl        # calls the API, costs ~$4 a run
+python -m sim.compare_policies --seeds 500 --plot bench/results/bandit.png
+python bench/embed_bench.py chunks.jsonl mps
+```
+
+CI lints, runs the tests, and fails the build if recall@5 on the sample notes drops below 0.80.
+
+On the sample notes (19 answerable questions, so small and easy, but it caught a real bug:
+keyword search used to AND every word of the question and found almost nothing):
+
+| Retrieval (samples) | recall@5 | MRR@10 |
+|---|---|---|
+| Vector only | 1.000 | 0.939 |
+| Keyword only (before the fix) | 0.105 | 0.105 |
+| Keyword only | 1.000 | 0.912 |
+| Hybrid (RRF) | 1.000 | 0.947 |
+The LLM-judged answer eval runs on demand from the Actions tab.
+
+## Results
+
+To fill in once I've run everything on my real material:
+
+| Retrieval | recall@5 | MRR@10 |
+|---|---|---|
+| Vector only | | |
+| Keyword only | | |
+| Hybrid (RRF) | | |
+
+| Topic classifier | macro-F1 | course acc. |
+|---|---|---|
+| Zero-shot (cosine to topic names) | | |
+| Logistic regression | | |
+| TopicNet (multi-task MLP) | | |
+
+## Layout
+
+```
+src/exampilot/    api, worker, queue, retrieval, agent, quiz, bandit, review, classifier
+db/               schema.sql, topics.sql
+web/              Vite + React + Tailwind + Recharts
+eval/ bench/ sim/ retrieval + answer evals, GPU benchmark, bandit simulation
+samples/          study notes + quiz questions for demos and CI
+k8s/              kind manifests with HPA (see k8s/README.md)
+```
+
+## What I'd do next
+
+Signed upload URLs (Cloud Run caps request bodies at 32 MiB), KEDA to scale workers on
+queue length instead of CPU, a cross-encoder re-ranker if the eval says it's worth the
+latency, streaming answers, and real auth if anyone other than me ever uses it.
